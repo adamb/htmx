@@ -1,0 +1,5 @@
+name = "your-project-name"
+compatibility_date = "2025-03-21"
+
+[site]
+bucket = "./public"
