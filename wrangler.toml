@@ -1,5 +1,6 @@
 name = "your-project-name"
 compatibility_date = "2025-03-21"
+main = "./functions/hello.js"
 
 [site]
 bucket = "./public"
