@@ -1,6 +1,7 @@
 name = "htmx"
 compatibility_date = "2025-03-21"
 main = "./functions/hello.js"
+pages_build_output_dir = "./public"
 
 [site]
 bucket = "./public"
