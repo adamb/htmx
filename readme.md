@@ -16,3 +16,9 @@ setup the project.  also use htmx version 2.  # HTMX Demo on Cloudflare Workers
 
 A simple demonstration of HTMX version 2 running on Cloudflare Workers.
 
+2025-03-30 11:18:17
+
+had to change the build setting on the Cloudflare dashboard to ``echo 'no build'``
+
+
+
