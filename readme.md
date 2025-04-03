@@ -20,5 +20,5 @@ A simple demonstration of HTMX version 2 running on Cloudflare Workers.
 
 had to change the build setting on the Cloudflare dashboard to ``echo 'no build'``
 
-
+retry creating a new project..
 
