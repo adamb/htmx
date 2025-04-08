@@ -8,10 +8,10 @@ export async function onRequestPost(context) {
   // For now, we just return the initial logged-out state HTML.
 
   // This HTML should match the initial state in public/index.html,
-  // including the wrapper div.
+  // including the wrapper div and Bootstrap classes.
   const loggedOutContent = `
-    <div id="auth-section">
-        <button hx-get="/login" hx-target="#auth-section" hx-swap="outerHTML">
+    <div id="auth-section" class="container mt-3 text-center">
+        <button hx-get="/login" hx-target="#auth-section" hx-swap="outerHTML" class="btn btn-primary">
             Login
         </button>
         <div id="login-area"></div>

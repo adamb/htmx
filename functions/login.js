@@ -7,9 +7,9 @@ export async function onRequestGet(context) {
   // In a real application, you would handle authentication here.
   // For now, we just return a simple message.
   const loggedInContent = `
-    <div>
+    <div class="text-center">
       <p>You are now logged in!</p>
-      <button hx-post="/logout" hx-target="body" hx-swap="innerHTML">Logout</button>
+      <button hx-post="/logout" hx-target="body" hx-swap="innerHTML" class="btn btn-secondary">Logout</button>
     </div>
   `;
 
