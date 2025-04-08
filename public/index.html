@@ -8,10 +8,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome HTMX + Cloudflare Pages and workers public dir</h1>
-    <button hx-get="/hello" hx-swap="outerHTML">
-        Click Me
+    <button hx-get="/login" hx-target="#login-area" hx-swap="outerHTML">
+        Login
     </button>
-    <div id="result"></div>
+    <div id="login-area"></div>
 </body>
 </html>
