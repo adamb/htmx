@@ -8,9 +8,11 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button hx-get="/login" hx-target="#login-area" hx-swap="outerHTML">
-        Login
-    </button>
-    <div id="login-area"></div>
+    <div id="auth-section">
+        <button hx-get="/login" hx-target="#auth-section" hx-swap="outerHTML">
+            Login
+        </button>
+        <div id="login-area"></div>
+    </div>
 </body>
 </html>
