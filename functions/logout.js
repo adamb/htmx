@@ -25,7 +25,7 @@ export async function onRequestPost(context) {
           </div>
           <div class="mb-3 text-start">
             <label for="emailInput" class="form-label">Email Address</label>
-            <input type="email" class="form-control" id="emailInput" name="email" required placeholder="Enter your email">
+            <input type="email" class="form-control" id="emailInput" name="email" required placeholder="skynet.initiator@cyberdyne.com">
           </div>
           <div class="mb-3 text-start">
             <label for="phoneInput" class="form-label">Phone Number</label>
