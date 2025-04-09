@@ -24,10 +24,7 @@ export async function onRequestPost(context) {
   `;
 
   // Note: The logout button in login.js targets 'body' with innerHTML swap.
-    </div>
-  `;
-
-  // Note: The logout button in login.js targets 'body' with innerHTML swap.
+  // So this response will replace the entire body content.
   // So this response will replace the entire body content.
   return new Response(loggedOutContent, {
     headers: { 'Content-Type': 'text/html' },
