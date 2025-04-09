@@ -29,7 +29,7 @@ export async function onRequestPost(context) {
           </div>
           <div class="mb-3 text-start">
             <label for="phoneInput" class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" id="phoneInput" name="phone" required placeholder="Enter your phone number">
+            <input type="tel" class="form-control" id="phoneInput" name="phone" required placeholder="+1-555-123-4567">
           </div>
           <button type="submit" class="btn btn-primary">Join List</button>
           <!-- Removed Cancel button as the form is always visible now -->
