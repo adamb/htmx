@@ -17,26 +17,58 @@ export async function onRequestPost(context) {
     </div>
     <div id="auth-section" class="container mt-3 text-center"> <!-- Reduced margin-top -->
         <p class="mb-4">Join our mailing list to keep up with Holberton Coding School and other tech related events.</p>
-        <!-- Form moved directly here -->
-        <form hx-post="/login" hx-target="#auth-section" hx-swap="outerHTML" class="mb-3">
-          <div class="mb-3 text-start">
+        <!-- Form moved directly here, added Bootstrap validation -->
+        <form hx-post="/login" hx-target="#auth-section" hx-swap="outerHTML" class="mb-3 needs-validation" novalidate>
+          <div class="mb-3 text-start position-relative"> <!-- Added position-relative for feedback positioning -->
             <label for="nameInput" class="form-label">Name</label>
             <input type="text" class="form-control" id="nameInput" name="name" required placeholder="Enter your full name">
+            <div class="invalid-tooltip"> <!-- Bootstrap invalid feedback -->
+              Please enter your name.
+            </div>
           </div>
-          <div class="mb-3 text-start">
+          <div class="mb-3 text-start position-relative">
             <label for="emailInput" class="form-label">Email Address</label>
             <input type="email" class="form-control" id="emailInput" name="email" required placeholder="skynet.initiator@cyberdyne.com">
+             <div class="invalid-tooltip">
+              Please enter a valid email address.
+            </div>
           </div>
-          <div class="mb-3 text-start">
+          <div class="mb-3 text-start position-relative">
             <label for="phoneInput" class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" id="phoneInput" name="phone" required placeholder="+1-555-123-4567">
+            <!-- Added pattern for basic phone structure (allows digits, +, -, (), spaces, 7-15 chars total) -->
+            <input type="tel" class="form-control" id="phoneInput" name="phone" required placeholder="+1-555-123-4567" pattern="^[\d\s+()-]{7,15}$">
+             <div class="invalid-tooltip">
+              Please enter a valid phone number (7-15 digits/chars).
+            </div>
           </div>
           <button type="submit" class="btn btn-primary">Join List</button>
           <!-- Removed Cancel button as the form is always visible now -->
         </form>
     </div>
-    <!-- Optional: Add Bootstrap JS Bundle if needed for components -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
+    <!-- Bootstrap JS Bundle needed for validation UI -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      // (From Bootstrap docs)
+      (() => {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+    </script>
 </body>
   `;
 
