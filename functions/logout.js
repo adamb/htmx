@@ -12,7 +12,10 @@ export async function onRequestPost(context) {
   // Since the target is body, we need to reconstruct the whole body content with the theme class.
   const loggedOutContent = `
 <body class="sci-fi-theme">
-    <div id="auth-section" class="container mt-5 text-center">
+    <div class="text-center pt-4"> <!-- Added container for logo -->
+        <img src="/images/code-pr_logo.png" alt="Code PR Logo" class="logo-image mb-4">
+    </div>
+    <div id="auth-section" class="container mt-3 text-center"> <!-- Reduced margin-top -->
         <button hx-get="/login/form" hx-target="#auth-section" hx-swap="outerHTML" class="btn btn-primary btn-lg">
             Initiate Access Sequence
         </button>

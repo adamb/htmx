@@ -92,3 +92,10 @@ body.sci-fi-theme {
     color: var(--sci-fi-accent);
     font-weight: normal; /* Monospace fonts often look bold already */
 }
+
+/* Logo Styling */
+.logo-image {
+    max-width: 150px; /* Adjust size as needed */
+    height: auto;
+    filter: drop-shadow(0 0 5px var(--sci-fi-accent)); /* Add a subtle glow */
+}

@@ -10,7 +10,10 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="sci-fi-theme">
-    <div id="auth-section" class="container mt-5 text-center"> <!-- Increased margin-top -->
+    <div class="text-center pt-4"> <!-- Added container for logo -->
+        <img src="/images/code-pr_logo.png" alt="Code PR Logo" class="logo-image mb-4">
+    </div>
+    <div id="auth-section" class="container mt-3 text-center"> <!-- Reduced margin-top -->
         <button hx-get="/login/form" hx-target="#auth-section" hx-swap="outerHTML" class="btn btn-primary btn-lg"> <!-- Made button larger -->
             Initiate Access Sequence
         </button>
