@@ -98,6 +98,18 @@ body.sci-fi-theme {
     box-shadow: 0 0 8px rgba(220, 53, 69, 0.6); /* Enhance red glow on focus */
 }
 
+/* Style Bootstrap invalid tooltip */
+.sci-fi-theme .invalid-tooltip {
+    display: block; /* Ensure it's displayed when Bootstrap adds it */
+    background-color: rgba(220, 53, 69, 0.9); /* Red background */
+    color: white;
+    border-radius: 4px;
+    padding: .25rem .5rem;
+    font-size: .875em;
+    /* Position adjustments might be needed depending on exact layout */
+    z-index: 10; /* Ensure it's above the input */
+}
+
 
 /* Logged-in message */
 .sci-fi-theme .logged-in-message p {
