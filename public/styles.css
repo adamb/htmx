@@ -82,6 +82,23 @@ body.sci-fi-theme {
     color: #889;
 }
 
+/* Style invalid form fields */
+.sci-fi-theme .form-control.is-invalid {
+    border-color: #dc3545; /* Bootstrap's default danger color */
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.4); /* Add a red glow */
+}
+/* Ensure the text error message is visible */
+.sci-fi-theme .text-danger {
+    color: #dc3545 !important; /* Ensure Bootstrap danger color is used */
+}
+
+/* Ensure focus styles override invalid styles if focused, but keep indication */
+.sci-fi-theme .form-control.is-invalid:focus {
+    border-color: #dc3545; /* Keep border red on focus */
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.6); /* Enhance red glow on focus */
+}
+
+
 /* Logged-in message */
 .sci-fi-theme .logged-in-message p {
     margin-bottom: 1.5rem;
