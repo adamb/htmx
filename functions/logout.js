@@ -56,15 +56,19 @@ export async function onRequestPost(context) {
         // Fetch all the forms we want to apply custom Bootstrap validation styles to
         const forms = document.querySelectorAll('.needs-validation')
 
-        // Loop over them and prevent submission
+        // Loop over them and prevent submission if invalid
         Array.from(forms).forEach(form => {
           form.addEventListener('submit', event => {
             if (!form.checkValidity()) {
-              event.preventDefault()
-              event.stopPropagation()
+              event.preventDefault(); // Prevent default browser submission
+              event.stopPropagation(); // Stop event bubbling
+              form.classList.add('was-validated'); // Add class to show errors
+              // return false; // Explicitly try returning false as well (optional, but for good measure)
+            } else {
+              // Optionally remove was-validated if you want errors to clear on valid submission attempt
+              // form.classList.remove('was-validated');
+              // Allow HTMX to handle the valid submission
             }
-
-            form.classList.add('was-validated')
           }, false)
         })
       })()
