@@ -17,10 +17,15 @@ export async function onRequestPost(context) {
     </div>
     <div id="auth-section" class="container mt-3 text-center"> <!-- Reduced margin-top -->
         <p class="mb-4">Join our mailing list to keep up with Holberton Coding School and other tech related events.</p>
-        <button hx-get="/login/form" hx-target="#auth-section" hx-swap="outerHTML" class="btn btn-primary btn-lg">
-            Join Mailing List
-        </button>
-        <div id="login-area"></div>
+        <!-- Form moved directly here -->
+        <form hx-post="/login" hx-target="#auth-section" hx-swap="outerHTML" class="mb-3">
+          <div class="mb-3 text-start"> <!-- Align label left -->
+            <label for="emailInput" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="emailInput" name="email" required placeholder="Enter your email">
+          </div>
+          <button type="submit" class="btn btn-primary">Join List</button>
+          <!-- Removed Cancel button as the form is always visible now -->
+        </form>
     </div>
     <!-- Optional: Add Bootstrap JS Bundle if needed for components -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
