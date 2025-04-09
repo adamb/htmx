@@ -48,29 +48,41 @@ export async function onRequestPost(context) {
     <!-- Bootstrap JS Bundle needed for validation UI -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-      // Example starter JavaScript for disabling form submissions if there are invalid fields
-      // (From Bootstrap docs)
+      // Integrate Bootstrap validation with HTMX lifecycle
       (() => {
         'use strict'
+        // Find the form
+        const form = document.querySelector('.needs-validation'); // Assuming only one such form
 
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        const forms = document.querySelectorAll('.needs-validation')
-
-        // Loop over them and prevent submission if invalid
-        Array.from(forms).forEach(form => {
-          form.addEventListener('submit', event => {
+        if (form) {
+          // Listen for the htmx:beforeRequest event triggered by this form
+          form.addEventListener('htmx:beforeRequest', function (event) {
+            // Check the browser's native form validation
             if (!form.checkValidity()) {
-              event.preventDefault(); // Prevent default browser submission
-              event.stopPropagation(); // Stop event bubbling
-              form.classList.add('was-validated'); // Add class to show errors
-              // return false; // Explicitly try returning false as well (optional, but for good measure)
+              // Form is invalid: prevent the HTMX request
+              event.preventDefault();
+              console.log("HTMX request prevented due to invalid form."); // Debug log
+              // Add was-validated class to show Bootstrap feedback
+              form.classList.add('was-validated');
             } else {
-              // Optionally remove was-validated if you want errors to clear on valid submission attempt
-              // form.classList.remove('was-validated');
-              // Allow HTMX to handle the valid submission
+              // Form is valid: allow the HTMX request to proceed
+              // Optionally remove was-validated if you want errors to clear before successful submit
+               form.classList.remove('was-validated');
+               console.log("Form is valid, allowing HTMX request."); // Debug log
             }
-          }, false)
-        })
+          });
+
+          // Optional: Clear validation state when HTMX swaps content back in (e.g., after successful submit)
+          // This might be needed if the success message replaces the form, then logout brings it back.
+          // document.body.addEventListener('htmx:afterSwap', function(event) {
+          //   if (event.detail.target.id === 'auth-section') {
+          //      const potentiallyNewForm = document.querySelector('.needs-validation');
+          //      if (potentiallyNewForm) {
+          //          potentiallyNewForm.classList.remove('was-validated');
+          //      }
+          //   }
+          // });
+        }
       })()
     </script>
 </body>
