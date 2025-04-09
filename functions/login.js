@@ -19,10 +19,11 @@ export async function onRequestPost(context) {
   }
 
 
+  // This content replaces #auth-section, which is inside the themed body
   const loggedInContent = `
-    <div class="text-center">
-      <p>You are now logged in as <strong>${email}</strong>!</p>
-      <button hx-post="/logout" hx-target="body" hx-swap="innerHTML" class="btn btn-secondary">Logout</button>
+    <div id="auth-section" class="container mt-5 text-center logged-in-message"> <!-- Keep container structure and add class -->
+      <p>Authentication successful. Welcome, Operator <strong>${email}</strong>.</p>
+      <button hx-post="/logout" hx-target="body" hx-swap="innerHTML" class="btn btn-secondary">Terminate Session</button>
     </div>
   `;
 
