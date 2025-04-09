@@ -16,8 +16,9 @@ export async function onRequestPost(context) {
         <img src="/images/code-pr_logo.png" alt="Code PR Logo" class="logo-image mb-4">
     </div>
     <div id="auth-section" class="container mt-3 text-center"> <!-- Reduced margin-top -->
+        <p class="mb-4">Join our mailing list to keep up with Holberton Coding School and other tech related events.</p>
         <button hx-get="/login/form" hx-target="#auth-section" hx-swap="outerHTML" class="btn btn-primary btn-lg">
-            Initiate Access Sequence
+            Join Mailing List
         </button>
         <div id="login-area"></div>
     </div>
