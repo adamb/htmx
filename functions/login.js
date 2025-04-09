@@ -61,6 +61,7 @@ export async function onRequestPost(context) {
         // Construct the form again with a phone error message
         const errorForm = `
         <div id="auth-section" class="container mt-3 text-center"> <!-- Match initial structure -->
+          <h1>DEBUG: PHONE VALIDATION FAILED</h1> <!-- Added for debugging -->
           <p class="mb-4">Join our mailing list to keep up with Holberton Coding School and other tech related events.</p>
           <form hx-post="/login" hx-target="#auth-section" hx-swap="outerHTML" class="mb-3">
             <div class="mb-3 text-start">
