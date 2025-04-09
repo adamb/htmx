@@ -53,6 +53,42 @@ export async function onRequestPost(context) {
     }
     // --- End Email Validation ---
 
+    // --- Phone Validation (Liberal) ---
+    // Remove common formatting chars and check if length is reasonable (e.g., 7-15 digits)
+    const digitsOnly = phone.replace(/[\s+()-]/g, ''); // Remove spaces, +, (, ), -
+    const phoneRegex = /^\d{7,15}$/; // Check for 7 to 15 digits
+    if (!phoneRegex.test(digitsOnly)) {
+        // Construct the form again with a phone error message
+        const errorForm = `
+        <div id="auth-section" class="container mt-3 text-center"> <!-- Match initial structure -->
+          <p class="mb-4">Join our mailing list to keep up with Holberton Coding School and other tech related events.</p>
+          <form hx-post="/login" hx-target="#auth-section" hx-swap="outerHTML" class="mb-3">
+            <div class="mb-3 text-start">
+              <label for="nameInput" class="form-label">Name</label>
+              <input type="text" class="form-control" id="nameInput" name="name" required placeholder="Enter your full name" value="${name}">
+            </div>
+            <div class="mb-3 text-start">
+              <label for="emailInput" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="emailInput" name="email" required placeholder="skynet.initiator@cyberdyne.com" value="${email}">
+            </div>
+            <div class="mb-3 text-start">
+              <label for="phoneInput" class="form-label">Phone Number</label>
+              <!-- Add error message display -->
+              <div class="text-danger mb-2" style="font-size: 0.9em;">Please enter a valid phone number (7-15 digits).</div>
+              <input type="tel" class="form-control is-invalid" id="phoneInput" name="phone" required placeholder="+1-555-123-4567" value="${phone}">
+            </div>
+            <button type="submit" class="btn btn-primary">Join List</button>
+          </form>
+        </div>
+      `;
+      // Return the form with error, status 400 Bad Request
+      return new Response(errorForm, {
+        status: 400,
+        headers: { 'Content-Type': 'text/html' },
+      });
+    }
+    // --- End Phone Validation ---
+
   } catch (e) {
     console.error("Failed to parse form data:", e);
     // Handle error appropriately, maybe return an error response (e.g., status 500)
