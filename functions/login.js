@@ -10,51 +10,59 @@ export async function onRequestPost(context) {
   let phone = 'N/A'; // Default phone
   let status = "success";
   let errorMessage = "";
-
+  let isNewSubscriber = true;
+  
   try {
     // Get form data
     const formData = await context.request.formData();
     name = formData.get('name') || 'Operator';
     email = formData.get('email') || '';
     phone = formData.get('phone') || '';
-
+    
     // Basic server-side validation as a security measure
     if (!email || !email.includes('@') || !name || !phone) {
       status = "error";
       errorMessage = "Required fields are missing or invalid";
     } else {
-      // Create a subscriber record
-      const subscriber = {
-        name: name,
-        email: email,
-        phone: phone,
-        joined: new Date().toISOString()
-      };
-
       // Use email as the key for the KV store (must be unique)
       const key = email.toLowerCase();
-
-      // Store in Cloudflare KV
-      // The env.MAILING_LIST binding is available through context.env
-      await context.env.MAILING_LIST.put(key, JSON.stringify(subscriber));
-
-      // Optionally, maintain a list of all subscribers (useful for listing)
-      // This gets all current subscribers (if any), adds the new one, then saves the list
-      let subscribersList = [];
-      try {
-        const existingList = await context.env.MAILING_LIST.get('all_subscribers');
-        if (existingList) {
-          subscribersList = JSON.parse(existingList);
+      
+      // Check if this email already exists in the KV store
+      const existingData = await context.env.MAILING_LIST.get(key);
+      
+      if (existingData) {
+        // Email already exists in our system
+        isNewSubscriber = false;
+        // We'll return a special message but won't overwrite the existing data
+      } else {
+        // Create a new subscriber record
+        const subscriber = {
+          name: name,
+          email: email,
+          phone: phone,
+          joined: new Date().toISOString()
+        };
+        
+        // Store in Cloudflare KV
+        await context.env.MAILING_LIST.put(key, JSON.stringify(subscriber));
+        
+        // Maintain a list of all subscribers (useful for listing)
+        let subscribersList = [];
+        try {
+          const existingList = await context.env.MAILING_LIST.get('all_subscribers');
+          if (existingList) {
+            subscribersList = JSON.parse(existingList);
+          }
+        } catch (e) {
+          console.error("Error retrieving subscriber list:", e);
+          // Continue with empty list if there was an error
         }
-      } catch (e) {
-        console.error("Error retrieving subscriber list:", e);
-        // Continue with empty list if there was an error
-      }
-
-      // Add the new subscriber email to the list if not already present
-      if (!subscribersList.includes(key)) {
-        subscribersList.push(key);
-        await context.env.MAILING_LIST.put('all_subscribers', JSON.stringify(subscribersList));
+        
+        // Add the new subscriber email to the list if not already present
+        if (!subscribersList.includes(key)) {
+          subscribersList.push(key);
+          await context.env.MAILING_LIST.put('all_subscribers', JSON.stringify(subscribersList));
+        }
       }
     }
   } catch (e) {
@@ -62,7 +70,7 @@ export async function onRequestPost(context) {
     status = "error";
     errorMessage = "An error occurred processing your request.";
   }
-
+  
   // Prepare response based on status
   if (status === "error") {
     return new Response(`
@@ -75,17 +83,21 @@ export async function onRequestPost(context) {
       status: 400
     });
   }
-
-  // Success response
+  
+  // Success response - with different message depending on whether user is new or existing
+  const successMessage = isNewSubscriber
+    ? "Your details have been stored securely!"
+    : "You were already on our mailing list!";
+    
   const loggedInContent = `
     <div id="auth-section" class="container mt-5 text-center logged-in-message">
-      <p>Thank you for joining, <strong>${name}</strong>! We've received your information.</p>
+      <p>Thank you${isNewSubscriber ? " for joining" : ""}, <strong>${name}</strong>! We've received your information.</p>
       <p>A confirmation may be sent to ${email}.</p>
-      <p class="text-success small">Your details have been stored securely!</p>
+      <p class="text-success small">${successMessage}</p>
       <button hx-post="/logout" hx-target="body" hx-swap="innerHTML" class="btn btn-secondary">Start Over</button>
     </div>
   `;
-
+  
   return new Response(loggedInContent, {
     headers: { 'Content-Type': 'text/html' },
   });
