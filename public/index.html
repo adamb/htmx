@@ -20,14 +20,14 @@
           <div class="mb-3 text-start position-relative"> <!-- Added position-relative for feedback positioning -->
             <label for="nameInput" class="form-label">Name</label>
             <input type="text" class="form-control" id="nameInput" name="name" required placeholder="Enter your full name">
-            <div class="invalid-tooltip"> <!-- Bootstrap invalid feedback -->
+            <div class="invalid-tooltip d-none"> <!-- Hidden by default -->
               Please enter your name.
             </div>
           </div>
           <div class="mb-3 text-start position-relative">
             <label for="emailInput" class="form-label">Email Address</label>
             <input type="email" class="form-control" id="emailInput" name="email" required placeholder="skynet.initiator@cyberdyne.com">
-             <div class="invalid-tooltip">
+             <div class="invalid-tooltip d-none"> <!-- Hidden by default -->
               Please enter a valid email address.
             </div>
           </div>
@@ -35,7 +35,7 @@
             <label for="phoneInput" class="form-label">Phone Number</label>
             <!-- Added pattern for basic phone structure (allows digits, +, -, (), spaces, 7-15 chars total) -->
             <input type="tel" class="form-control" id="phoneInput" name="phone" required placeholder="+1-555-123-4567" pattern="^[\d\s+()-]{7,15}$">
-             <div class="invalid-tooltip">
+             <div class="invalid-tooltip d-none"> <!-- Hidden by default -->
               Please enter a valid phone number (7-15 digits/chars).
             </div>
           </div>
@@ -46,40 +46,57 @@
     <!-- Bootstrap JS Bundle needed for validation UI -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-      // Integrate Bootstrap validation with HTMX lifecycle
+      // Custom validation script for HTMX form
       (() => {
         'use strict'
         // Find the form
-        const form = document.querySelector('.needs-validation'); // Assuming only one such form
+        const form = document.querySelector('.needs-validation');
 
         if (form) {
-          // Listen for the htmx:beforeRequest event triggered by this form
+          // Get all tooltip elements
+          const tooltips = form.querySelectorAll('.invalid-tooltip');
+          
+          // Initial state - hide all tooltips
+          tooltips.forEach(tooltip => {
+            tooltip.classList.add('d-none');
+          });
+          
+          // When Join List button is clicked (form submission attempted)
           form.addEventListener('htmx:beforeRequest', function (event) {
-            // Check the browser's native form validation
+            // Reset all tooltips to hidden
+            tooltips.forEach(tooltip => {
+              tooltip.classList.add('d-none');
+            });
+            
+            // Check form validity
             if (!form.checkValidity()) {
-              // Form is invalid: prevent the HTMX request
+              // Prevent the HTMX request if invalid
               event.preventDefault();
-              console.log("HTMX request prevented due to invalid form."); // Debug log
-              // Add was-validated class to show Bootstrap feedback
+              
+              // Add styling to invalid inputs
               form.classList.add('was-validated');
-            } else {
-              // Form is valid: allow the HTMX request to proceed
-              // Optionally remove was-validated if you want errors to clear before successful submit
-               form.classList.remove('was-validated');
-               console.log("Form is valid, allowing HTMX request."); // Debug log
+              
+              // Only show tooltips for invalid fields
+              form.querySelectorAll('input:invalid').forEach(invalidInput => {
+                // Find the tooltip that follows this input
+                const tooltip = invalidInput.nextElementSibling;
+                if (tooltip && tooltip.classList.contains('invalid-tooltip')) {
+                  tooltip.classList.remove('d-none');
+                }
+              });
             }
           });
-
-          // Optional: Clear validation state when HTMX swaps content back in (e.g., after successful submit)
-          // This might be needed if the success message replaces the form, then logout brings it back.
-          // document.body.addEventListener('htmx:afterSwap', function(event) {
-          //   if (event.detail.target.id === 'auth-section') {
-          //      const potentiallyNewForm = document.querySelector('.needs-validation');
-          //      if (potentiallyNewForm) {
-          //          potentiallyNewForm.classList.remove('was-validated');
-          //      }
-          //   }
-          // });
+          
+          // Hide tooltips when user starts typing in a field
+          form.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+              // Find this input's tooltip and hide it
+              const tooltip = this.nextElementSibling;
+              if (tooltip && tooltip.classList.contains('invalid-tooltip')) {
+                tooltip.classList.add('d-none');
+              }
+            });
+          });
         }
       })()
     </script>
