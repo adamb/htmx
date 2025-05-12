@@ -163,7 +163,16 @@ export async function onRequestPost(context) {
     `;
   } else {
     // For existing subscribers
-    // 'subscriber' variable should hold the parsed existingData
+    // Parse the existingData here to ensure subscriber is defined
+    let subscriber = null;
+    try {
+      if (existingData) {
+        subscriber = JSON.parse(existingData);
+      }
+    } catch (e) {
+      console.error("Error parsing existing subscriber data:", e);
+    }
+    
     let successMessage = "You were already on our mailing list!";
     if (subscriber && !subscriber.emailConfirmed) {
         successMessage = "You are on our mailing list but haven't confirmed your email yet. Please check your inbox for the confirmation link, or sign up again to receive a new one.";
