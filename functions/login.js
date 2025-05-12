@@ -1,6 +1,9 @@
+import { sendEmail } from '../email.js'; // For sending confirmation email
+// crypto.randomUUID() is globally available in Cloudflare Workers/Pages environment
+
 /**
  * Handles POST requests to /login
- * Stores user information in Cloudflare KV and returns confirmation message
+ * Stores user information in Cloudflare KV, sends confirmation email for new users, and returns confirmation message
  * @param {EventContext} context - The context object.
  * @returns {Response} - The response object.
  */
@@ -29,22 +32,71 @@ export async function onRequestPost(context) {
       
       // Check if this email already exists in the KV store
       const existingData = await context.env.MAILING_LIST.get(key);
+      let subscriber; // Define subscriber here to be accessible later
       
       if (existingData) {
         // Email already exists in our system
         isNewSubscriber = false;
+        subscriber = JSON.parse(existingData); // Load existing subscriber data
         // We'll return a special message but won't overwrite the existing data
       } else {
         // Create a new subscriber record
-        const subscriber = {
+        const confirmationToken = crypto.randomUUID();
+        const tokenLifetimeSeconds = 24 * 60 * 60; // 24 hours
+        const tokenExpiresAt = Date.now() + (tokenLifetimeSeconds * 1000);
+
+        subscriber = {
           name: name,
-          email: email,
+          email: email, // Original case email
           phone: phone,
-          joined: new Date().toISOString()
+          joined: new Date().toISOString(),
+          emailConfirmed: false,
+          confirmationToken: confirmationToken,
+          confirmationTokenExpiresAt: tokenExpiresAt
         };
         
         // Store in Cloudflare KV
         await context.env.MAILING_LIST.put(key, JSON.stringify(subscriber));
+
+        // Store the token lookup (token -> email) in KV with an expiration
+        // 'key' is the lowercased email
+        const tokenKvKey = `TOKEN:${confirmationToken}`;
+        await context.env.MAILING_LIST.put(
+          tokenKvKey,
+          JSON.stringify({ email: key, expiresAt: tokenExpiresAt }),
+          { expirationTtl: tokenLifetimeSeconds }
+        );
+        
+        // Send confirmation email
+        const mailUser = context.env.MAILHOP_USER;
+        const mailPass = context.env.MAILHOP_PASS;
+
+        if (mailUser && mailPass) {
+          const baseUrl = new URL(context.request.url).origin;
+          const confirmationLink = `${baseUrl}/api/confirm-email?token=${confirmationToken}`;
+          const emailSubject = 'Confirm Your Email for Selfie.pr';
+          const emailTextBody = `Hello ${name},\n\nPlease confirm your email address by clicking this link: ${confirmationLink}\n\nIf you did not sign up for Selfie.pr, please ignore this email.\n\nThanks,\nThe Selfie.pr Team`;
+          const emailHtmlBody = `<p>Hello ${name},</p><p>Please confirm your email address by clicking the link below:</p><p><a href="${confirmationLink}">Confirm Your Email</a></p><p>If you did not sign up for Selfie.pr, please ignore this email.</p><p>Thanks,<br>The Selfie.pr Team</p>`;
+
+          try {
+            await sendEmail({
+              to: email, // Send to original case email
+              subject: emailSubject,
+              text: emailTextBody,
+              html: emailHtmlBody,
+              MAILHOP_USER: mailUser,
+              MAILHOP_PASS: mailPass,
+            });
+          } catch (emailError) {
+            console.error("Failed to send confirmation email:", emailError);
+            // Potentially update errorMessage or status here if needed
+            errorMessage = "Registered, but failed to send confirmation email. Please contact support if you don't receive it shortly.";
+            // status could be set to a specific error state if desired
+          }
+        } else {
+          console.error('Email credentials (MAILHOP_USER, MAILHOP_PASS) not configured. Cannot send confirmation email.');
+          errorMessage = "Registered, but server email configuration is incomplete. Confirmation email not sent.";
+        }
         
         // Maintain a list of all subscribers (useful for listing)
         let subscribersList = [];
@@ -72,33 +124,53 @@ export async function onRequestPost(context) {
   }
   
   // Prepare response based on status
+  let responseContent;
+
   if (status === "error") {
-    return new Response(`
+    responseContent = `
       <div id="auth-section" class="container mt-5 text-center error-message">
         <p class="text-danger">Error: ${errorMessage}</p>
         <button hx-post="/logout" hx-target="body" hx-swap="innerHTML" class="btn btn-secondary">Try Again</button>
       </div>
-    `, {
+    `;
+    return new Response(responseContent, {
       headers: { 'Content-Type': 'text/html' },
-      status: 400
+      status: 400 // Or appropriate error status
     });
   }
   
-  // Success response - with different message depending on whether user is new or existing
-  const successMessage = isNewSubscriber
-    ? "Your details have been stored securely!"
-    : "You were already on our mailing list!";
-    
-  const loggedInContent = `
-    <div id="auth-section" class="container mt-5 text-center logged-in-message">
-      <p>Thank you${isNewSubscriber ? " for joining" : ""}, <strong>${name}</strong>! We've received your information.</p>
-      <p>A confirmation may be sent to ${email}.</p>
-      <p class="text-success small">${successMessage}</p>
-      <button hx-post="/logout" hx-target="body" hx-swap="innerHTML" class="btn btn-secondary">Start Over</button>
-    </div>
-  `;
+  // Success response
+  if (isNewSubscriber) {
+    // For new subscribers, inform them about email confirmation
+    responseContent = `
+      <div id="auth-section" class="container mt-5 text-center logged-in-message">
+        <h4>Registration Almost Complete!</h4>
+        <p>Thank you for signing up, <strong>${name}</strong>!</p>
+        <p>A confirmation email has been sent to <strong>${email}</strong>. Please check your inbox (and spam folder) and click the link to complete your registration.</p>
+        ${errorMessage ? `<p class="text-warning small">${errorMessage}</p>` : ''}
+        <button hx-post="/logout" hx-target="body" hx-swap="innerHTML" class="btn btn-secondary">Start Over</button>
+      </div>
+    `;
+  } else {
+    // For existing subscribers
+    // 'subscriber' variable should hold the parsed existingData
+    let successMessage = "You were already on our mailing list!";
+    if (subscriber && !subscriber.emailConfirmed) {
+        successMessage = "You are on our mailing list but haven't confirmed your email yet. Please check your inbox for the confirmation link, or sign up again to receive a new one.";
+    } else if (subscriber && subscriber.emailConfirmed) {
+        successMessage = "Welcome back! Your email is confirmed.";
+    }
+
+    responseContent = `
+      <div id="auth-section" class="container mt-5 text-center logged-in-message">
+        <p>Welcome back, <strong>${name}</strong>!</p>
+        <p class="text-success small">${successMessage}</p>
+        <button hx-post="/logout" hx-target="body" hx-swap="innerHTML" class="btn btn-secondary">Start Over</button>
+      </div>
+    `;
+  }
   
-  return new Response(loggedInContent, {
+  return new Response(responseContent, {
     headers: { 'Content-Type': 'text/html' },
   });
 }
