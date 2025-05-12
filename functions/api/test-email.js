@@ -3,7 +3,7 @@ import { sendEmail } from '../../email.js'; // Adjust path if your email.js is e
 export async function onRequestGet(context) {
   // Define test email parameters
   const testEmailParams = {
-    to: 'test-recipient@example.com', // CHANGE THIS to a real email address you can check
+    to: 'beguelin@gmail.com', // CHANGE THIS to a real email address you can check
     subject: 'Test Email from Cloudflare Pages Function',
     text: 'This is a test email sent from the /api/test-email endpoint.',
     html: '<p>This is a <strong>test email</strong> sent from the <code>/api/test-email</code> endpoint.</p>',
