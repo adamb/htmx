@@ -29,6 +29,15 @@ export async function onRequestPost(context) {
     } else {
       // Use email as the key for the KV store (must be unique)
       const key = email.toLowerCase();
+
+      // Check if MAILING_LIST binding is available
+      if (!context.env.MAILING_LIST) {
+        console.error("MAILING_LIST KV namespace not found in context.env. Check wrangler.toml, ensure you're in the project root, and consider updating Wrangler or using --kv flag.");
+        status = "error";
+        errorMessage = "Server configuration error: Mailing list service is unavailable.";
+        // This will skip to the error handling block at the end of the try-catch
+        throw new Error(errorMessage); 
+      }
       
       // Check if this email already exists in the KV store
       const existingData = await context.env.MAILING_LIST.get(key);
