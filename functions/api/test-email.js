@@ -42,7 +42,11 @@ export async function onRequestGet(context) {
     // You might need to use a .dev.vars file or pass them via `wrangler pages dev --binding MAILHOP_USER="user" --binding MAILHOP_PASS="pass"`
 
     console.log(`Attempting to send test email to: ${testEmailParams.to}`);
-    const result = await sendEmail(testEmailParams);
+    const result = await sendEmail({
+      ...testEmailParams,
+      MAILHOP_USER: mailUser,
+      MAILHOP_PASS: mailPass,
+    });
 
     console.log('Test email sent successfully:', result);
     return new Response(JSON.stringify({ success: true, message: 'Test email sent successfully!', details: result }), {

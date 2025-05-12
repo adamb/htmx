@@ -1,9 +1,6 @@
-export async function sendEmail({ to, subject, text, html, redirectUrl }) {
-  const MAILHOP_USER = process?.env?.MAILHOP_USER;
-  const MAILHOP_PASS = process?.env?.MAILHOP_PASS;
-
+export async function sendEmail({ to, subject, text, html, redirectUrl, MAILHOP_USER, MAILHOP_PASS }) {
   if (!MAILHOP_USER || !MAILHOP_PASS) {
-    throw new Error('MAILHOP_USER and MAILHOP_PASS must be configured');
+    throw new Error('MAILHOP_USER and MAILHOP_PASS must be provided to sendEmail function');
   }
 
   // Create base64 encoded credentials for Basic Auth
