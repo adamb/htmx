@@ -1,9 +1,6 @@
-import { env } from '$env/dynamic/private';
-
-
 export async function sendEmail({ to, subject, text, html, redirectUrl }) {
-  const MAILHOP_USER = MAILHOP_USER || process?.env?.MAILHOP_USER
-  const MAILHOP_PASS = MAILHOP_PASS || process?.env?.MAILHOP_PASS
+  const MAILHOP_USER = process?.env?.MAILHOP_USER;
+  const MAILHOP_PASS = process?.env?.MAILHOP_PASS;
 
   if (!MAILHOP_USER || !MAILHOP_PASS) {
     throw new Error('MAILHOP_USER and MAILHOP_PASS must be configured');
