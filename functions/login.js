@@ -74,9 +74,9 @@ export async function onRequestPost(context) {
         if (mailUser && mailPass) {
           const baseUrl = new URL(context.request.url).origin;
           const confirmationLink = `${baseUrl}/api/confirm-email?token=${confirmationToken}`;
-          const emailSubject = 'Confirm Your Email for Selfie.pr';
-          const emailTextBody = `Hello ${name},\n\nPlease confirm your email address by clicking this link: ${confirmationLink}\n\nIf you did not sign up for Selfie.pr, please ignore this email.\n\nThanks,\nThe Selfie.pr Team`;
-          const emailHtmlBody = `<p>Hello ${name},</p><p>Please confirm your email address by clicking the link below:</p><p><a href="${confirmationLink}">Confirm Your Email</a></p><p>If you did not sign up for Selfie.pr, please ignore this email.</p><p>Thanks,<br>The Selfie.pr Team</p>`;
+          const emailSubject = 'Confirm Your Email for code.pr';
+          const emailTextBody = `Hello ${name},\n\nPlease confirm your email address by clicking this link: ${confirmationLink}\n\nIf you did not sign up for code.pr, please ignore this email.\n\nThanks,\nThe code.pr Team`;
+          const emailHtmlBody = `<p>Hello ${name},</p><p>Please confirm your email address by clicking the link below:</p><p><a href="${confirmationLink}">Confirm Your Email</a></p><p>If you did not sign up for code.pr, please ignore this email.</p><p>Thanks,<br>The code.pr Team</p>`;
 
           try {
             await sendEmail({
