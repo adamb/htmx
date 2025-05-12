@@ -144,11 +144,10 @@ export async function onRequestPost(context) {
     // For new subscribers, inform them about email confirmation
     responseContent = `
       <div id="auth-section" class="container mt-5 text-center logged-in-message">
-        <h4>Registration Almost Complete!</h4>
-        <p>Thank you for signing up, <strong>${name}</strong>!</p>
-        <p>A confirmation email has been sent to <strong>${email}</strong>. Please check your inbox (and spam folder) and click the link to complete your registration.</p>
+        <h4>Confirmation Email Sent</h4>
+        <p>An email confirmation has been sent to <strong>${email}</strong>.</p>
+        <p>Please check your inbox (and spam folder) and click the link to complete your registration.</p>
         ${errorMessage ? `<p class="text-warning small">${errorMessage}</p>` : ''}
-        <button hx-post="/logout" hx-target="body" hx-swap="innerHTML" class="btn btn-secondary">Start Over</button>
       </div>
     `;
   } else {
