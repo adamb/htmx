@@ -2,22 +2,16 @@ import { env } from '$env/dynamic/private';
 
 
 export async function sendEmail({ to, subject, text, html, redirectUrl }) {
-  // const MAILHOP_USER = process?.env?.MAILHOP_USER || env?.MAILHOP_USER
-  // const MAILHOP_PASS = process?.env?.MAILHOP_PASS || env?.MAILHOP_PASS
-  
-  // if (!MAILHOP_USER || !MAILHOP_PASS) {
-  //   throw new Error('MAILHOP_USER and MAILHOP_PASS must be configured');
-  // }
+  const MAILHOP_USER = MAILHOP_USER || process?.env?.MAILHOP_USER
+  const MAILHOP_PASS = MAILHOP_PASS || process?.env?.MAILHOP_PASS
 
-  // // Create base64 encoded credentials for Basic Auth
-  // const rawString = `${MAILHOP_USER.trim()}:${MAILHOP_PASS.trim()}`;
-  // // Use Buffer.from() without encoding parameter for exact match
-  // // const credentials = Buffer.from(rawString).toString('base64');
-  
-  // XXX hard coding the credentials.  not sure why the base64 isn't working
-  //  Seems the password passed in is not the actual password for some reason
+  if (!MAILHOP_USER || !MAILHOP_PASS) {
+    throw new Error('MAILHOP_USER and MAILHOP_PASS must be configured');
+  }
 
-  const credentials = 'XXX'
+  // Create base64 encoded credentials for Basic Auth
+  const rawString = `${MAILHOP_USER.trim()}:${MAILHOP_PASS.trim()}`;
+  const credentials = btoa(rawString);
 
   // console.log('Raw auth string:', rawString);
   // console.log('Base64 credentials:', credentials);
