@@ -16,7 +16,7 @@ export async function sendEmail({ to, subject, text, html, redirectUrl, MAILHOP_
     messages: [{
       from: { 
         name: "code.pr",
-        email: 'noreply@mailhop.org' 
+        email: 'noreply@code.pr' 
       },
       to: [{ 
         email: to 
@@ -51,7 +51,7 @@ export async function sendEmail({ to, subject, text, html, redirectUrl, MAILHOP_
         messages: [{
           from: { 
             name: "code.pr",
-            email: 'noreply@mailhop.org' 
+            email: 'noreply@code.pr' 
           },
           to: [{ 
             email: to 
