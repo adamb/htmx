@@ -1,4 +1,4 @@
-import { sendEmail } from '../../email.js'; // Adjust path if your email.js is elsewhere
+import { sendEmail } from '../email.js';
 
 export async function onRequestGet(context) {
   // Define test email parameters
