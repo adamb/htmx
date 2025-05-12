@@ -88,7 +88,8 @@ export async function onRequestPost(context) {
           const emailHtmlBody = `<p>Hello ${name},</p><p>Please confirm your email address by clicking the link below:</p><p><a href="${confirmationLink}">Confirm Your Email</a></p><p>If you did not sign up for code.pr, please ignore this email.</p><p>Thanks,<br>The code.pr Team</p>`;
 
           try {
-            await sendEmail({
+            console.log('Attempting to send confirmation email to:', email);
+            const emailResult = await sendEmail({
               to: email, // Send to original case email
               subject: emailSubject,
               text: emailTextBody,
@@ -96,6 +97,7 @@ export async function onRequestPost(context) {
               MAILHOP_USER: mailUser,
               MAILHOP_PASS: mailPass,
             });
+            console.log('Email send result:', emailResult);
           } catch (emailError) {
             console.error("Failed to send confirmation email:", emailError);
             // Potentially update errorMessage or status here if needed
