@@ -1,4 +1,4 @@
-import { sendEmail } from '../email.js'; // For sending confirmation email
+import { sendEmail } from './email.js'; // For sending confirmation email
 // crypto.randomUUID() is globally available in Cloudflare Workers/Pages environment
 
 /**
